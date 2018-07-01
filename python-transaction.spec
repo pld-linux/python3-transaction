@@ -14,7 +14,7 @@ Summary:	Generic transaction implementation for Python. It is mainly used by the
 Summary(pl.UTF-8):	Ogólna implementacja transakcji dla Pythona. Głównie używana przez ZODB.
 Name:		python-%{pypi_name}
 Version:	2.1.2
-Release:	1
+Release:	2
 License:	ZPL 2.1
 Group:		Libraries/Python
 Source0:	https://files.pythonhosted.org/packages/source/t/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
