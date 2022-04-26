@@ -1,0 +1,33 @@
+--- transaction-3.0.1/setup.py.orig	2020-12-11 12:41:44.000000000 +0100
++++ transaction-3.0.1/setup.py	2022-04-26 22:16:54.892747735 +0200
+@@ -25,7 +25,7 @@ def _read_file(filename):
+ 
+ README = _read_file('README.rst') + '\n\n' + _read_file('CHANGES.rst')
+ 
+-tests_require = ['mock']
++tests_require = ['mock;python_version=="2.7"']
+ 
+ setup(name='transaction',
+       version=version,
+--- transaction-3.0.1/src/transaction/tests/test__manager.py.orig	2020-12-11 12:41:44.000000000 +0100
++++ transaction-3.0.1/src/transaction/tests/test__manager.py	2022-04-26 22:18:47.468804525 +0200
+@@ -11,7 +11,10 @@
+ # FOR A PARTICULAR PURPOSE
+ #
+ ##############################################################################
+-import mock
++try:
++    import mock
++except ImportError:
++    from unittest import mock
+ import unittest
+ 
+ import zope.interface.verify
+@@ -671,7 +674,6 @@ class TransactionManagerTests(unittest.T
+         # If a datamanager registers for synchonization after a
+         # transaction has started, we should call newTransaction so it
+         # can do necessry setup.
+-        import mock
+         from .. import TransactionManager
+         manager = TransactionManager()
+         sync1 = mock.MagicMock()

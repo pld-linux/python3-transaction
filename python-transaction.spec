@@ -1,60 +1,65 @@
-# TODO:
-# - Fix docs ((exception: No module named 'repoze'))
+#
 # Conditional build:
-%bcond_with	doc	# don't build doc
-%bcond_without	tests	# do not perform "make test"
+%bcond_without	doc	# Sphinx documentation
+%bcond_without	tests	# unit tests
 %bcond_without	python2 # CPython 2.x module
 %bcond_without	python3 # CPython 3.x module
 
-# NOTES:
 %define		module		transaction
-%define		egg_name	%{module}
-%define		pypi_name	%{module}
-Summary:	Generic transaction implementation for Python. It is mainly used by the ZODB
-Summary(pl.UTF-8):	Ogólna implementacja transakcji dla Pythona. Głównie używana przez ZODB.
-Name:		python-%{pypi_name}
-Version:	2.1.2
-Release:	6
-License:	ZPL 2.1
+
+Summary:	Generic transaction implementation for Python, mainly used by the ZODB
+Summary(pl.UTF-8):	Ogólna implementacja transakcji dla Pythona, używana głównie przez ZODB
+Name:		python-%{module}
+Version:	3.0.1
+Release:	1
+License:	ZPL v2.1
 Group:		Libraries/Python
-Source0:	https://files.pythonhosted.org/packages/source/t/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
-# Source0-md5:	375a7f9d434ad0e9bf2039a3a0588e2b
+Source0:	https://files.pythonhosted.org/packages/source/t/transaction/%{module}-%{version}.tar.gz
+# Source0-md5:	6ffa07bd5021d502edb3998baee3701f
+Patch0:		%{name}-mock.patch
 URL:		https://github.com/zopefoundation/transaction
-#URL:		https://pypi.python.org/pypi/%{pypi_name}
-BuildRequires:	python-mock
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
 %if %{with python2}
-BuildRequires:	python-modules
-BuildRequires:	python-pbr
+BuildRequires:	python-modules >= 1:2.7
 BuildRequires:	python-setuptools
+%if %{with tests}
+BuildRequires:	python-mock
+%endif
 %endif
 %if %{with python3}
-BuildRequires:	python3-mock
-BuildRequires:	python3-modules
-BuildRequires:	python3-pbr
+BuildRequires:	python3-modules >= 1:3.5
 BuildRequires:	python3-setuptools
 %endif
-# when using /usr/bin/env or other in-place substitutions
-#BuildRequires:	sed >= 4.0
-# replace with other requires if defined in setup.py
-Requires:	python-modules
+%if %{with doc}
+BuildRequires:	python3-repoze.sphinx.autointerface
+BuildRequires:	sphinx-pdg-3 >= 1.8
+%endif
+Requires:	python-modules >= 1:2.7
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
+This package contains a generic transaction implementation for Python.
+It is mainly used by the ZODB.
 
 %description -l pl.UTF-8
+Ten pakiet zawiera ogólną implementację transakcji dla Ptyhona. Jest
+używany głównie przez ZODB.
 
-%package -n python3-%{pypi_name}
-Summary:	-
-Summary(pl.UTF-8):	-
+%package -n python3-%{module}
+Summary:	Generic transaction implementation for Python, mainly used by the ZODB
+Summary(pl.UTF-8):	Ogólna implementacja transakcji dla Pythona, używana głównie przez ZODB
 Group:		Libraries/Python
-Requires:	python3-modules
+Requires:	python3-modules >= 1:3.5
 
-%description -n python3-%{pypi_name}
+%description -n python3-%{module}
+This package contains a generic transaction implementation for Python.
+It is mainly used by the ZODB.
 
-%description -n python3-%{pypi_name} -l pl.UTF-8
+%description -n python3-%{module} -l pl.UTF-8
+Ten pakiet zawiera ogólną implementację transakcji dla Ptyhona. Jest
+używany głównie przez ZODB.
 
 %package apidocs
 Summary:	API documentation for Python %{module} module
@@ -62,13 +67,14 @@ Summary(pl.UTF-8):	Dokumentacja API modułu Pythona %{module}
 Group:		Documentation
 
 %description apidocs
-API documentation for Pythona %{module} module.
+API documentation for Python %{module} module.
 
 %description apidocs -l pl.UTF-8
 Dokumentacja API modułu Pythona %{module}.
 
 %prep
-%setup -q -n %{pypi_name}-%{version}
+%setup -q -n %{module}-%{version}
+%patch0 -p1
 
 %build
 %if %{with python2}
@@ -80,9 +86,9 @@ Dokumentacja API modułu Pythona %{module}.
 %endif
 
 %if %{with doc}
-cd docs
-%{__make} -j1 html
-rm -rf _build/html/_sources
+PYTHONPATH=$(pwd)/src \
+%{__make} -C docs html \
+	SPHINXBUILD=sphinx-build-3
 %endif
 
 %install
@@ -90,12 +96,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with python2}
 %py_install
-
-# when files are installed in other way that standard 'setup.py
-# they need to be (re-)compiled
-# change %{py_sitedir} to %{py_sitescriptdir} for 'noarch' packages!
-%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
-%py_comp $RPM_BUILD_ROOT%{py_sitedir}
 
 %py_postclean
 %endif
@@ -110,21 +110,21 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with python2}
 %files
 %defattr(644,root,root,755)
-%doc README.rst
+%doc CHANGES.rst COPYRIGHT.txt LICENSE.txt README.rst
 %{py_sitescriptdir}/%{module}
-%{py_sitescriptdir}/%{egg_name}-%{version}-py*.egg-info
+%{py_sitescriptdir}/%{module}-%{version}-py*.egg-info
 %endif
 
 %if %{with python3}
-%files -n python3-%{pypi_name}
+%files -n python3-%{module}
 %defattr(644,root,root,755)
-%doc README.rst
+%doc CHANGES.rst COPYRIGHT.txt LICENSE.txt README.rst
 %{py3_sitescriptdir}/%{module}
-%{py3_sitescriptdir}/%{egg_name}-%{version}-py*.egg-info
+%{py3_sitescriptdir}/%{module}-%{version}-py*.egg-info
 %endif
 
 %if %{with doc}
 %files apidocs
 %defattr(644,root,root,755)
-%doc docs/_build/html/*
+%doc docs/_build/html/{_modules,_static,*.html,*.js}
 %endif
