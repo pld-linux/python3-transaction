@@ -10,12 +10,12 @@
 Summary:	Generic transaction implementation for Python, mainly used by the ZODB
 Summary(pl.UTF-8):	Ogólna implementacja transakcji dla Pythona, używana głównie przez ZODB
 Name:		python-%{module}
-Version:	3.0.1
+Version:	3.1.0
 Release:	1
 License:	ZPL v2.1
 Group:		Libraries/Python
 Source0:	https://files.pythonhosted.org/packages/source/t/transaction/%{module}-%{version}.tar.gz
-# Source0-md5:	6ffa07bd5021d502edb3998baee3701f
+# Source0-md5:	7e66f49195e9a54cf0af3121febb38a3
 Patch0:		%{name}-mock.patch
 URL:		https://github.com/zopefoundation/transaction
 BuildRequires:	rpm-pythonprov
