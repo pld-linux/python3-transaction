@@ -11,7 +11,7 @@ Summary:	Generic transaction implementation for Python, mainly used by the ZODB
 Summary(pl.UTF-8):	Ogólna implementacja transakcji dla Pythona, używana głównie przez ZODB
 Name:		python-%{module}
 Version:	3.1.0
-Release:	1
+Release:	2
 License:	ZPL v2.1
 Group:		Libraries/Python
 Source0:	https://files.pythonhosted.org/packages/source/t/transaction/%{module}-%{version}.tar.gz
